@@ -18,7 +18,7 @@ class Name(Field):
 class Phone(Field):
     # реалізація класу
     def __init__(self, value):
-        if not value.isdigit() and len(value) == 10:
+        if not value.isdigit() or len(value) < 10:
             raise ValueError('The info is not correct. Please provide correct phone number')
         super().__init__(value)
         
