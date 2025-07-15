@@ -18,7 +18,7 @@ class Name(Field):
 class Phone(Field):
     # реалізація класу
     def __init__(self, value):
-        if not value.isdigit() or len(value) < 10:
+        if not (value.isdigit() and len(value) == 10):
             raise ValueError('The info is not correct. Please provide correct phone number')
         super().__init__(value)
         
@@ -31,7 +31,7 @@ class Record:
     # реалізація класу
 
     def add_birthday(self, birthday):
-        self.birthday = birthday.date
+        self.birthday = Birthday(birthday)
 
 
     def add_phone(self, phone:str):
@@ -93,9 +93,9 @@ class AddressBook(UserDict):
         days = 7
         today = date.today()
         for user in self.data:
-            if self.data[user].birthday:
+            if self.data[user].birthday.value:
                 current_user = self.data[user].name.value
-                current_user_birthday = (self.data[user].birthday)#
+                current_user_birthday = datetime.strptime(self.data[user].birthday.value, "%d.%m.%Y")
                 birthday_this_year = current_user_birthday.replace(year = today.year)
                 if birthday_this_year.date() < today:
                     birthday_this_year = current_user_birthday.replace(year = today.year + 1)
@@ -103,7 +103,7 @@ class AddressBook(UserDict):
                 if 0 <= (birthday_this_year.date() - today).days <= days:
                     birthday_this_year = adjust_for_weekend(birthday_this_year)
 
-                gz_date = birthday_this_year.strftime('%m/%d/%Y')
+                gz_date = birthday_this_year.strftime('%d.%m.%Y')
                 upcoming_birthdays.append({current_user:gz_date})
         return upcoming_birthdays
     
@@ -125,7 +125,8 @@ class Birthday(Field):
         try:
             # Додайте перевірку коректності даних
             # та перетворіть рядок на об'єкт datetime
-            self.date = datetime.strptime(value, "%d.%m.%Y")
+            if datetime.strptime(value, "%d.%m.%Y"):
+                super().__init__(value)
             
 
         except ValueError:
@@ -137,6 +138,10 @@ def main():
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
+        if not user_input:
+            print('Field cannot be blank')
+            continue
+
         command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:
@@ -144,7 +149,7 @@ def main():
             break
 
         elif command == "hello":
-            print("How can I help you?")
+            print("Hi, how can I help you?")
 
         elif command == "add":
             print(add_contact(args,book))
@@ -166,7 +171,7 @@ def main():
             print(show_birthday(args, book))
         elif command == "birthdays":
             # реалізація
-            print(birthdays(book))
+            print(book.get_upcoming_birthday())
         else:
             print("Invalid command.")
 
@@ -231,7 +236,8 @@ def add_birthday(args, book):
     message = 'User doesnt exist'
     if record:
         message = 'Birthday updated'
-        record.birthday = birthday
+        #record.birthday = Birthday(birthday)
+        record.add_birthday(birthday)
     return message
 
 @input_error
@@ -243,13 +249,13 @@ def show_birthday(args, book: AddressBook):
         message = f"{name}'s birthday: {record.birthday}"
     return message
 
-def birthdays(book: AddressBook):
-    all_birthdays = []
-    for record in book.data.values():
-        if record.birthday:
-            birthday_str = record.birthday
-            all_birthdays.append(f"{record.name.value}: {birthday_str}")
-    return "\n".join(all_birthdays) if all_birthdays else "No birthdays found."
+# def birthdays(book: AddressBook):
+#     all_birthdays = []
+#     for record in book.data.values():
+#         if record.birthday:
+#             birthday_str = record.birthday
+#             all_birthdays.append(f"{record.name.value}: {birthday_str}")
+#     return "\n".join(all_birthdays) if all_birthdays else "No birthdays found."
 
 
 
