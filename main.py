@@ -93,33 +93,33 @@ class AddressBook(UserDict):
         days = 7
         today = date.today()
         for user in self.data:
-            if self.data[user].birthday.value:
-                current_user = self.data[user].name.value
-                current_user_birthday = datetime.strptime(self.data[user].birthday.value, "%d.%m.%Y")
-                birthday_this_year = current_user_birthday.replace(year = today.year)
-                if birthday_this_year.date() < today:
-                    birthday_this_year = current_user_birthday.replace(year = today.year + 1)
-                #
-                if 0 <= (birthday_this_year.date() - today).days <= days:
-                    birthday_this_year = adjust_for_weekend(birthday_this_year)
+            # if self.data[user].birthday.value:
+            #     current_user = self.data[user].name.value
+            #     current_user_birthday = datetime.strptime(self.data[user].birthday.value, "%d.%m.%Y")
+            #     birthday_this_year = current_user_birthday.replace(year = today.year)
+            #     if birthday_this_year.date() < today:
+            #         birthday_this_year = current_user_birthday.replace(year = today.year + 1)
+            #     #
+            #     if 0 <= (birthday_this_year.date() - today).days <= days:
+            #         birthday_this_year = adjust_for_weekend(birthday_this_year)
 
-                gz_date = birthday_this_year.strftime('%d.%m.%Y')
-                upcoming_birthdays.append({current_user:gz_date})
-            # try:
-            #     if self.data[user].birthday.value:
-            #         current_user = self.data[user].name.value
-            #         current_user_birthday = datetime.strptime(self.data[user].birthday.value, "%d.%m.%Y")
-            #         birthday_this_year = current_user_birthday.replace(year = today.year)
-            #         if birthday_this_year.date() < today:
-            #             birthday_this_year = current_user_birthday.replace(year = today.year + 1)
-            #         #
-            #         if 0 <= (birthday_this_year.date() - today).days <= days:
-            #             birthday_this_year = adjust_for_weekend(birthday_this_year)
+            #     gz_date = birthday_this_year.strftime('%d.%m.%Y')
+            #     upcoming_birthdays.append({current_user:gz_date})
+            try:
+                if self.data[user].birthday.value:
+                    current_user = self.data[user].name.value
+                    current_user_birthday = datetime.strptime(self.data[user].birthday.value, "%d.%m.%Y")
+                    birthday_this_year = current_user_birthday.replace(year = today.year)
+                    if birthday_this_year.date() < today:
+                        birthday_this_year = current_user_birthday.replace(year = today.year + 1)
+                    #
+                    if 0 <= (birthday_this_year.date() - today).days <= days:
+                        birthday_this_year = adjust_for_weekend(birthday_this_year)
 
-            #         gz_date = birthday_this_year.strftime('%d.%m.%Y')
-            #         upcoming_birthdays.append({current_user:gz_date})
-            # except:
-            #     continue
+                    gz_date = birthday_this_year.strftime('%d.%m.%Y')
+                    upcoming_birthdays.append({current_user:gz_date})
+            except:
+                continue
         return upcoming_birthdays
     
     def show_birthdays(self):
