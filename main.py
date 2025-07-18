@@ -105,6 +105,21 @@ class AddressBook(UserDict):
 
                 gz_date = birthday_this_year.strftime('%d.%m.%Y')
                 upcoming_birthdays.append({current_user:gz_date})
+            # try:
+            #     if self.data[user].birthday.value:
+            #         current_user = self.data[user].name.value
+            #         current_user_birthday = datetime.strptime(self.data[user].birthday.value, "%d.%m.%Y")
+            #         birthday_this_year = current_user_birthday.replace(year = today.year)
+            #         if birthday_this_year.date() < today:
+            #             birthday_this_year = current_user_birthday.replace(year = today.year + 1)
+            #         #
+            #         if 0 <= (birthday_this_year.date() - today).days <= days:
+            #             birthday_this_year = adjust_for_weekend(birthday_this_year)
+
+            #         gz_date = birthday_this_year.strftime('%d.%m.%Y')
+            #         upcoming_birthdays.append({current_user:gz_date})
+            # except:
+            #     continue
         return upcoming_birthdays
     
     def show_birthdays(self):
@@ -171,7 +186,7 @@ def main():
             print(show_birthday(args, book))
         elif command == "birthdays":
             # реалізація
-            print(book.get_upcoming_birthday())
+            print(birthdays(book))
         else:
             print("Invalid command.")
 
@@ -222,10 +237,10 @@ def change_phone(args, book: AddressBook):
 
 @input_error
 def show_phone(args, book: AddressBook):
-    name , *_ = args  # add birthday!!!!!!!
+    name , *_ = args  
     record = book.find(name)
     if record:
-        return record
+        return ', '.join(str(phone) for phone in record.phones)
     else:
         return 'Phone not found'
 
@@ -249,13 +264,15 @@ def show_birthday(args, book: AddressBook):
         message = f"{name}'s birthday: {record.birthday}"
     return message
 
-# def birthdays(book: AddressBook):
-#     all_birthdays = []
-#     for record in book.data.values():
-#         if record.birthday:
-#             birthday_str = record.birthday
-#             all_birthdays.append(f"{record.name.value}: {birthday_str}")
-#     return "\n".join(all_birthdays) if all_birthdays else "No birthdays found."
+@input_error
+def birthdays(book: AddressBook):
+    return book.get_upcoming_birthday()
+    # all_birthdays = []
+    # for record in book.data.values():
+    #     if record.birthday:
+    #         birthday_str = record.birthday
+    #         all_birthdays.append(f"{record.name.value}: {birthday_str}")
+    # return "\n".join(all_birthdays) if all_birthdays else "No birthdays found."
 
 
 
